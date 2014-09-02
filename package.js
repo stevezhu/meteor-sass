@@ -12,7 +12,8 @@ Package._transitional_registerBuildPlugin({
 	],
 	npmDependencies: {
 		'node-sass': '0.9.3',
-		'lodash': '2.4.1'
+		'lodash': '2.4.1',
+		'minimist': '1.1.0'
 	}
 });
 

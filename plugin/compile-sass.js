@@ -1,39 +1,78 @@
 var _ = Npm.require('lodash'),
 	path = Npm.require('path'),
 	fs = Npm.require('fs'),
-	Future = Npm.require('fibers/future'),
-	sass = Npm.require('node-sass');
+	sass = Npm.require('node-sass'),
+	files = Npm.require('./files.js');
 
-var readJSON = function(jsonPath) {
-	var json = fs.readFileSync(jsonPath);
-	try {
-		return JSON.parse(json);
-	} catch (err) {
-		console.error("Failed to parse json file: " + jsonPath, err);
-		return {};
+var argv = Npm.require('minimist')(process.argv.slice(2)),
+	command = _.first(argv._);
+
+var findRootDir = function(filePath) {
+	if (command === 'test-packages') {
+		return files.findPackageDir(filePath);
+	} else {
+		return files.findAppDir(filePath);
 	}
 };
 
-var sourceHandler = function(compileStep) {
-	var fullInputPath = compileStep._fullInputPath;
+var readJSON = function(jsonPath, compileStep) {
+	try {
+		var data = fs.readFileSync(jsonPath);
+		try {
+			return JSON.parse(data);
+		} catch (err) {
+			// don't submit error if file is empty
+			if (data.length > 0) {
+				compileStep.error({
+					message: err.name + ': ' + err.message,
+					sourcePath: path.relative(process.cwd(), jsonPath)
+				});
+			}
+		}
+	} catch (err) {
+		// ignore
+	}
+	return {};
+};
+
+var writeJSON = function(jsonPath, json, compileStep) {
+	var data = JSON.stringify(json, null, 2);
+	try {
+		fs.writeFileSync(jsonPath, data);
+	} catch (err) {
+		compileStep.error({
+			message: err.name + ': ' + err.message,
+			sourcePath: path.relative(process.cwd(), jsonPath)
+		});
+	}
+};
+
+Plugin.registerSourceHandlers = function(extensions, options, handler) {
+	_.each(extensions, function(extension) {
+		Plugin.registerSourceHandler(extension, options, handler);
+	});
+};
+
+var OPTIONS_FILENAME = 'sass_options.json';
+Plugin.registerSourceHandler(['sass', 'scss'], {archMatching: 'web'}, function(compileStep) {
 	// return if partial
-	if (path.basename(fullInputPath)[0] === '_') {
+	if (path.basename(compileStep.inputPath)[0] === '_') {
 		return;
 	}
 
+	var fullInputPath = compileStep._fullInputPath;
+	var rootDir = findRootDir(fullInputPath);
+
 	// OPTIONS ========================================
 
-	var optionsFile = path.join(process.cwd(), 'sass.json');
-	var options = fs.existsSync(optionsFile) ? readJSON(optionsFile) : {};
+	var optionsPath = path.join(rootDir, OPTIONS_FILENAME);
+	var options = readJSON(optionsPath, compileStep);
 	options = _.extend(options, {
 		sourceComments: 'none',
 		includePaths: [],
 		stats: {}
 	});
-	options.file = fullInputPath;
-	if (!_.isArray(options.includePaths)) {
-		options.includePaths = [options.includePaths];
-	}
+	options.file = fullInputPath; // not in extend because this shouldn't be found in the options json
 	options.includePaths.push(path.dirname(fullInputPath));
 
 	// COMPILE ========================================
@@ -57,7 +96,4 @@ var sourceHandler = function(compileStep) {
 		path: compileStep.inputPath + ".css",
 		data: css
 	});
-};
-
-Plugin.registerSourceHandler("scss", {archMatching: 'web'}, sourceHandler);
-Plugin.registerSourceHandler("sass", {archMatching: 'web'}, sourceHandler);
+});

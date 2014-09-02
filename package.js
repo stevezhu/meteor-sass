@@ -15,3 +15,13 @@ Package._transitional_registerBuildPlugin({
 		'lodash': '2.4.1'
 	}
 });
+
+Package.onTest(function(api) {
+	api.use(['test-helpers', 'tinytest']);
+	api.use(['ui', 'templating', 'stevezhu:sass']);
+	api.addFiles([
+		'tests/test.scss',
+		'tests/test.html',
+		'tests/test.js'
+	], 'client');
+});

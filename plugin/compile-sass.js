@@ -137,7 +137,7 @@ Plugin.registerSourceHandler(INCLUDE_PATHS_FILENAME, function(compileStep) {
 
 	// OPTIONS ========================================
 
-	var optionsPath = path.join(rootDir, 'sass_options.json');
+	var optionsPath = path.join(rootDir, OPTIONS_FILENAME);
 	var options = readJSON(optionsPath, compileStep);
 	// because the options file might not exist yet
 	if (!_.has(options, 'includePaths')) {

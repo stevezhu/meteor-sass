@@ -59,13 +59,10 @@ Plugin.registerSourceHandlers = function(extensions, options, handler) {
  */
 var OPTIONS_FILENAME = 'sass_options.json';
 Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, function(compileStep) {
-	console.log("");
-	console.log(compileStep.inputPath);
-
 	if (path.basename(compileStep.inputPath)[0] === '_') {
 		return;
 	}
-
+//
 	var rootDir = findRootDir(compileStep._fullInputPath);
 
 	var f = new Future;
@@ -100,7 +97,6 @@ Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, function(
 		f.return(err);
 	};
 	options.stats = {};
-	//console.log('options', options.includePaths);
 
 	// COMPILE ========================================
 
@@ -115,7 +111,6 @@ Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, function(
 	} else {
 		// TODO add result.sourceMap when node-sass segmentation fault fix is released
 		// possible other way of getting sourceMaps with renderSync -> options.stats.sourceMap?
-		console.log(result.css);
 		compileStep.addStylesheet({
 			path: compileStep.inputPath + '.css',
 			data: result.css
@@ -139,7 +134,6 @@ Plugin.registerSourceHandler(INCLUDE_PATHS_FILENAME, function(compileStep) {
 
 	// full path of the directory sass_include_paths.json is in
 	var relativeDir = path.dirname(compileStep._fullInputPath);
-	console.log(relativeDir);
 
 	// OPTIONS ========================================
 

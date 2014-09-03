@@ -21,6 +21,7 @@ Package.onTest(function(api) {
 	api.use(['test-helpers', 'tinytest']);
 	api.use(['ui', 'templating', 'stevezhu:sass']);
 	api.addFiles([
+		'tests/sass_include_paths.json',
 		'tests/test.scss',
 		'tests/test.html',
 		'tests/test.js'

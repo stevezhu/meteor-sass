@@ -62,8 +62,8 @@ Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, function(
 	if (path.basename(compileStep.inputPath)[0] === '_') {
 		return;
 	}
-//
-	var rootDir = findRootDir(compileStep._fullInputPath);
+
+	var rootDir = findRootDir(compileStep._fullInputPath) || '';
 
 	var f = new Future;
 
@@ -130,14 +130,14 @@ Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, function(
  */
 var INCLUDE_PATHS_FILENAME = 'sass_include_paths.json';
 Plugin.registerSourceHandler(INCLUDE_PATHS_FILENAME, function(compileStep) {
-	var rootDir = findRootDir(compileStep._fullInputPath);
+	var rootDir = findRootDir(compileStep._fullInputPath) || '';
 
 	// full path of the directory sass_include_paths.json is in
 	var relativeDir = path.dirname(compileStep._fullInputPath);
 
 	// OPTIONS ========================================
 
-	var optionsPath = path.join(rootDir, OPTIONS_FILENAME);
+	var optionsPath = path.join(rootDir, 'sass_options.json');
 	var options = readJSON(optionsPath, compileStep);
 	// because the options file might not exist yet
 	if (!_.has(options, 'includePaths')) {

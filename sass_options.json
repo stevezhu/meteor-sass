@@ -1,5 +1,7 @@
 {
-  "includePaths": [
-    "tests/partials"
-  ]
+  "packageIncludePaths": {
+    "tests": [
+      "tests/partials/"
+    ]
+  }
 }

@@ -13,6 +13,7 @@ var args = Npm.require('minimist')(process.argv.slice(2))._,
 	command = _.first(args);
 var isApp = args.length === 0;
 var isTestPackages = command === 'test-packages';
+var isPublishPackage = command === 'publish';
 
 var debug = function() {
 	if (process.env.NODE_ENV === 'debug') {
@@ -245,6 +246,10 @@ Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, function(
  */
 var INCLUDE_PATHS_FILENAME = 'sass_include_paths.json';
 Plugin.registerSourceHandler(INCLUDE_PATHS_FILENAME, {archMatching: 'os'}, function(compileStep) {
+	if (isPublishPackage) {
+		return;
+	}
+
 	updateCompileStepPaths(compileStep);
 	createPackageLink(compileStep, compileStep._fullInputPath);
 

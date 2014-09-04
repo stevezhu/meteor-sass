@@ -9,8 +9,10 @@ var _ = Npm.require('lodash'),
 	sass = Npm.require('node-sass'),
 	files = Npm.require('./files.js');
 
-var argv = Npm.require('minimist')(process.argv.slice(2)),
-	command = _.first(argv._);
+var args = Npm.require('minimist')(process.argv.slice(2))._,
+	command = _.first(args);
+var isApp = args.length === 0;
+var isTestPackages = command === 'test-packages';
 
 var debug = function() {
 	if (process.env.NODE_ENV === 'debug') {
@@ -65,7 +67,7 @@ var mkdirp = function(p) {
  */
 var PACKAGE_LINKS_DIR = '.sass/'
 var createPackageLink = function(compileStep, includePathsFile) {
-	if (command !== 'test-packages') {
+	if (isApp) {
 		var dir = path.join(compileStep.rootDir, path.join(PACKAGE_LINKS_DIR, 'packages/'));
 		mkdirp(dir);
 		var packageDir = files.findPackageDir(includePathsFile),
@@ -86,11 +88,11 @@ var createPackageLink = function(compileStep, includePathsFile) {
 };
 
 var findRootDir = function(filePath) {
-	if (command === 'test-packages') {
-		return files.findPackageDir(filePath);
-	} else {
+	if (isApp) {
 		// uses cwd because packages might not be in the app dir
 		return files.findAppDir(process.cwd());
+	} else {
+		return files.findPackageDir(filePath);
 	}
 };
 
@@ -265,7 +267,7 @@ Plugin.registerSourceHandler(INCLUDE_PATHS_FILENAME, {archMatching: 'os'}, funct
 	// the includePaths loaded from sass_include_paths.json
 	var includePaths = readJSON(compileStep._fullInputPath, []);
 	includePaths = _.map(includePaths, function(includePath) {
-		if (command !== 'test-packages') {
+		if (isApp) {
 			includePath = path.join(PACKAGE_LINKS_DIR, compileStep.relativeDir, includePath).replace(/:/g, path.sep);
 		} else {
 			includePath = path.join(compileStep.relativeDir, includePath);

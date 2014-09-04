@@ -1,10 +1,6 @@
 Meteor package for sass and scss using [node-sass](https://github.com/sass/node-sass).
 
 Compatible with Meteor 0.9.0 and above.
-Meteor package for sass and scss using [node-sass](https://github.com/sass/node-sass).
-
-Compatible with Meteor 0.9.0 and above.
-
 Currently only compatible with os.osx.x86_64 architecture.
 
 

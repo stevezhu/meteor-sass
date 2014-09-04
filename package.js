@@ -1,6 +1,6 @@
 Package.describe({
 	summary: "Meteor package for using sass or scss stylesheets.",
-	version: "1.1.0",
+	version: "1.2.0",
 	git: "https://github.com/stevezhu/meteor-sass.git"
 });
 

@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/stevezhu/meteor-sass.svg?branch=v1.2.2)](https://travis-ci.org/stevezhu/meteor-sass)
+[![Build Status](https://travis-ci.org/stevezhu/meteor-sass.svg?branch=master)](https://travis-ci.org/stevezhu/meteor-sass)
 
 Meteor package for sass and scss using [node-sass](https://github.com/sass/node-sass).
 

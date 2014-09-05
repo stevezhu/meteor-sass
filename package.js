@@ -1,6 +1,6 @@
 Package.describe({
 	summary: "Meteor package for using sass or scss stylesheets.",
-	version: "1.2.1",
+	version: "1.2.2",
 	git: "https://github.com/stevezhu/meteor-sass.git"
 });
 
@@ -15,6 +15,10 @@ Package._transitional_registerBuildPlugin({
 		'lodash': '2.4.1',
 		'minimist': '1.1.0'
 	}
+});
+
+Package.onUse(function(api) {
+	api.versionsFrom("METEOR@0.9.0");
 });
 
 Package.onTest(function(api) {

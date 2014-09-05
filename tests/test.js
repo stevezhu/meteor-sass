@@ -4,7 +4,7 @@ Tinytest.add("Sass - Sass files", function(test) {
 	UI.insert(renderedTemplate, document.body);
 
 	var elem = document.getElementById('test-elem');
-	test.equal(getStyleProperty(elem, 'display'), 'none', "Expected display: none;")
+	test.equal(getStyleProperty(elem, 'display'), 'none', "Expected display: none");
 
 	UI.remove(renderedTemplate);
 });
@@ -14,7 +14,7 @@ Tinytest.add("Sass - Partials", function(test) {
 	UI.insert(renderedTemplate, document.body);
 
 	var elem = document.getElementById('test-elem');
-	test.equal(getStyleProperty(elem, 'content'), 'partial', "Expected content: partial;")
+	test.equal(getStyleProperty(elem, 'content'), 'partial', "Expected content: \"partial\"");
 
 	UI.remove(renderedTemplate);
 });

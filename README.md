@@ -21,7 +21,7 @@ To create a sass library package (such as bourbon)
 ```javascript
 Package.onUse(function(api) {
 	// ...
-	api.use('stevezhu:sass');
+	api.use('stevezhu:sass@1.2.0');
 	api.addFiles('sass_include_paths.json', 'server');
 	// ...
 });

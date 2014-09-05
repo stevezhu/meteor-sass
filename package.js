@@ -19,7 +19,8 @@ Package._transitional_registerBuildPlugin({
 
 Package.onTest(function(api) {
 	api.use(['test-helpers', 'tinytest']);
-	api.use(['ui', 'templating', 'stevezhu:sass']);
+	api.use(['ui', 'templating']);
+	api.use('stevezhu:sass@1.2.0');
 	api.addFiles('tests/sass_include_paths.json', 'server');
 	api.addFiles([
 		'tests/test.scss',

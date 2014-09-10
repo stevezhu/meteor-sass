@@ -4,9 +4,16 @@ Meteor package for sass and scss using [node-sass](https://github.com/sass/node-
 
 Compatible with Meteor 0.9.0 and above.
 
-## Usage
+NOTE: Make sure you are using v1.2.2 or above. Any other version may not be stable.
 
-`sass_options.json` is a file created by the plugin which you can edit using node-sass options, except for the `packageIncludePaths` key.
+## Config
+
+### sass_options.json
+
+Located in the project or package root directory. Will be created by the plugin if not found.  
+\*Do not edit `packageIncludePaths`. The other options can be configured using [node-sass options](https://github.com/sass/node-sass#options).
+
+## Usage
 
 ### With applications
 
@@ -26,8 +33,24 @@ Package.onUse(function(api) {
 	// ...
 });
 ```
-List the folders that you want apps that use your package to have access to when compiling their sass/scss in the `sass_include_paths.json` as a string array.
-You can only list folders paths in the `sass_include_paths.json` file - paths directly to the sass/scss do not work.
 
+__sass_include_paths.json__
 
-An example can be found in `tests/`
+Directories listed in the `sass_include_paths.json` are searched when looking for files referenced using `@import`.  
+Note: You can only list folders paths; paths directly to the sass/scss files do not work.  
+List the folders in the `sass_include_paths.json` as a string array. 
+Paths are relative to the `sass_include_paths.json` file.
+
+Example:
+```json
+[
+	"./"
+]
+```
+
+Another example can be found in `tests/`.
+
+## Milestones
+(versions designate the version the feature starts from)
+- v1.1.0 - Include paths
+- v1.2.2 - Linux support

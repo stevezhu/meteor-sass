@@ -12,7 +12,7 @@ Package._transitional_registerBuildPlugin({
 		'plugin/compile-sass.js'
 	],
 	npmDependencies: {
-		'node-sass': '1.2.2',
+		'node-sass': '1.1.4',
 		'lodash': '2.4.1',
 		'minimist': '1.1.0'
 	}

@@ -26,7 +26,7 @@ CompileSassUtils = {
 		var isInPackage = this.isInPackage(compileStep);
 		this.debug(isInPackage ? 'THIS IS IN A PACKAGE' : 'THIS IS IN AN APP');
 
-		compileStep.appDir = this.isTestPackages ? files.findPackageDir(compileStep._fullInputPath) : files.findAppDir(process.cwd());
+		compileStep.appDir = this.isTestPackages || this.isPublishPackage ? files.findPackageDir(compileStep._fullInputPath) : files.findAppDir(process.cwd());
 
 		// uses cwd for findAppDir because packages might not be in the app dir
 		compileStep.rootDir = isInPackage ? files.findPackageDir(compileStep._fullInputPath) : files.findAppDir(process.cwd());
@@ -41,7 +41,7 @@ CompileSassUtils = {
 	 * For creating hard links to packages because node-sass/libsass includePaths don't work when there are colons in the name
 	 */
 	createPackageLink: function(compileStep) {
-		if (!this.isTestPackages) {
+		if (!this.isTestPackages && !this.isPublishPackage) {
 			var dir = path.join(compileStep.appDir, path.join(this.PACKAGE_LINKS_DIR, 'packages/'));
 			this.mkdirp(dir);
 			var packageName = compileStep.packageName.split(':');

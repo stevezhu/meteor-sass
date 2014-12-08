@@ -36,7 +36,7 @@ Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, generateH
 	// therefore, ignore it
 	return path.basename(compileStep.inputPath)[0] === '_';
 }, function(compileStep) {
-	utils.runInDir(compileStep.rootDir, function() {
+	utils.runInDir(compileStep.appDir, function() {
 		var future = new Future();
 
 		// ==== LOAD OPTIONS ====
@@ -119,7 +119,7 @@ Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, generateH
  * 2. Store 'sass_options.json' in the app root dir
  */
 Plugin.registerSourceHandler(INCLUDE_PATHS_FILENAME, {archMatching: 'os'}, generateHandler(function(compileStep) {
-	return utils.isPublishPackage || !utils.isInPackage(compileStep); // don't process while publishing this package
+	return !utils.isInPackage(compileStep); // don't process while publishing this package
 }, function(compileStep) {
 	utils.createPackageLink(compileStep);
 
@@ -134,7 +134,7 @@ Plugin.registerSourceHandler(INCLUDE_PATHS_FILENAME, {archMatching: 'os'}, gener
 	// the includePaths loaded from sass_include_paths.json
 	var includePaths = utils.readJSON(compileStep._fullInputPath, compileStep, []);
 	includePaths = _.map(includePaths, function(includePath) {
-		if (utils.isTestPackages) {
+		if (utils.isTestPackages || utils.isPublishPackage) {
 			includePath = path.join(compileStep.relativeDir, includePath);
 		} else {
 			includePath = path.join(utils.PACKAGE_LINKS_DIR, 'packages/', compileStep.packageName.replace(/:/g, path.sep), compileStep.relativeDir, includePath);

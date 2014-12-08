@@ -1,6 +1,6 @@
 {
   "packageIncludePaths": {
-    "tests": [
+    "local-test:stevezhu:sass": [
       "tests/partials/"
     ]
   }

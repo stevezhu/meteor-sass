@@ -1,10 +1,10 @@
 Package.describe({
 	summary: "Meteor package for using sass or scss stylesheets.",
-	version: "1.3.4",
+	version: "1.3.5",
 	git: "https://github.com/stevezhu/meteor-sass.git"
 });
 
-Package._transitional_registerBuildPlugin({
+Package.registerBuildPlugin({
 	name: 'compileSass',
 	use: [],
 	sources: [
@@ -12,18 +12,16 @@ Package._transitional_registerBuildPlugin({
 		'plugin/compile-sass.js'
 	],
 	npmDependencies: {
-		'node-sass': '1.0.3',
+		'node-sass': '0.9.6',
 		'lodash': '2.4.1',
 		'minimist': '1.1.0'
 	}
 });
 
-Package.onUse(function(api) {});
-
 Package.onTest(function(api) {
 	api.use(['test-helpers', 'tinytest']);
 	api.use(['ui', 'templating']);
-	api.use('stevezhu:sass@1.2.2');
+	api.use('stevezhu:sass');
 	api.addFiles('tests/sass_include_paths.json', 'server');
 	api.addFiles([
 		'tests/test.scss',

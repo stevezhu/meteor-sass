@@ -137,7 +137,7 @@ Plugin.registerSourceHandler(INCLUDE_PATHS_FILENAME, {archMatching: 'os'}, gener
 	var includePaths = utils.readJSON(compileStep._fullInputPath, compileStep, []);
 	// should be relative to root dir
 	var includePathsArray = _.map(includePaths, function(includePath) {
-		if (utils.isTestingPackage(compileStep)) {
+		if (utils.isTestingPackage(compileStep) || utils.pathsAreEqual(compileStep.packageDir, compileStep.rootDir)) {
 			includePath = path.join(compileStep.relativeDir, includePath);
 		} else {
 			includePath = path.join(utils.PACKAGE_LINKS_DIR, 'packages/', compileStep.packageName.replace(':', path.sep), compileStep.relativeDir, includePath);

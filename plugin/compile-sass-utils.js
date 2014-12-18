@@ -52,8 +52,7 @@ CompileSassUtils = {
 	 * For creating hard links to packages because node-sass/libsass includePaths don't work when there are colons in the name
 	 */
 	createPackageLink: function(compileStep) { // CORRECT
-		if (!this.isTestingPackage(compileStep)
-			&& path.relative(compileStep.packageDir, compileStep.rootDir) !== '') {
+		if (!this.isTestingPackage(compileStep) && !this.pathsAreEqual(compileStep.packageDir, compileStep.rootDir)) {
 			var dir = path.join(compileStep.rootDir, this.PACKAGE_LINKS_DIR, 'packages/');
 			var packageName = compileStep.packageName.split(':');
 
@@ -125,5 +124,8 @@ CompileSassUtils = {
 		process.chdir(dir);
 		func();
 		process.chdir(cwd);
+	},
+	pathsAreEqual: function(path1, path2) {
+		return path.relative(path1, path2) === '';
 	}
 };

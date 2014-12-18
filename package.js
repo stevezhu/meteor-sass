@@ -22,7 +22,7 @@ Package.registerBuildPlugin({
 Package.onTest(function(api) {
 	api.use(['test-helpers', 'tinytest']);
 	api.use(['ui', 'templating']);
-	api.use('stevezhu:sass');
+	api.use('stevezhu:sass@1.3.6');
 	api.addFiles('tests/sass_include_paths.json', 'server');
 	api.addFiles([
 		'tests/test.scss',

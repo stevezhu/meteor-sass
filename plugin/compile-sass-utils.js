@@ -30,7 +30,15 @@ CompileSassUtils = {
 		return compileStep.isTestingPackage;
 	},
 	updateCompileStepPaths: function(compileStep) {
-		compileStep.rootDir = this.isTestPackages ? path.join(process.cwd(), args[1]) : files.findAppDir();
+		compileStep.rootDir = (function() {
+			if (this.isTestPackages) {
+				return path.join(process.cwd(), args[1]);
+			}
+			if (this.isPublishPackage) {
+				return files.findPackageDir(process.cwd());
+			}
+			return files.findAppDir();
+		}).call(this);
 
 		if (this.isInPackage(compileStep)) {
 			compileStep.packageDir = files.findPackageDir(compileStep._fullInputPath);

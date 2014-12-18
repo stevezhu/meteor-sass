@@ -1,6 +1,6 @@
 Package.describe({
 	summary: "Meteor package for using sass or scss stylesheets.",
-	version: "1.3.5",
+	version: "1.3.6",
 	git: "https://github.com/stevezhu/meteor-sass.git"
 });
 
@@ -14,7 +14,8 @@ Package.registerBuildPlugin({
 	npmDependencies: {
 		'node-sass': '0.9.6',
 		'lodash': '2.4.1',
-		'minimist': '1.1.0'
+		'minimist': '1.1.0',
+		'mkdirp': '0.5.0'
 	}
 });
 

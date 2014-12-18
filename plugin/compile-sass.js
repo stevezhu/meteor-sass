@@ -9,15 +9,14 @@ var utils = CompileSassUtils;
 var OPTIONS_FILENAME = 'sass_options.json';
 var INCLUDE_PATHS_FILENAME = 'sass_include_paths.json';
 
-var generateHandler = function(exitEarly, handler) {
+var generateHandler = function(shouldProcess, handler) {
 	return function(compileStep) {
-		if (exitEarly(compileStep)) {
-			return;
-		}
-		utils.updateCompileStepPaths(compileStep);
-		utils.debug('compileStep', compileStep);
+		if (shouldProcess(compileStep)) {
+			utils.updateCompileStepPaths(compileStep);
+			utils.debug('compileStep', compileStep);
 
-		handler.call(this, compileStep);
+			handler.call(this, compileStep);
+		}
 	};
 };
 
@@ -33,15 +32,13 @@ Plugin.registerSourceHandlers = function(extensions, options, handler) {
  */
 Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, generateHandler(function(compileStep) {
 	// if the filename begins with '_', it is a partial
-	// therefore, ignore it
-	return path.basename(compileStep.inputPath)[0] === '_';
+	return path.basename(compileStep.inputPath)[0] !== '_';
 }, function(compileStep) {
-	utils.runInDir(compileStep.appDir, function() {
+	utils.runInDir(compileStep.rootDir, function() {
 		var future = new Future();
 
 		// ==== LOAD OPTIONS ====
-		var optionsPath = path.join(compileStep.appDir, OPTIONS_FILENAME);
-		utils.debug('optionsPath', optionsPath);
+		var optionsPath = path.join(compileStep.rootDir, OPTIONS_FILENAME);
 		var options = utils.readJSON(optionsPath, compileStep, {});
 
 		// ==== SET OPTIONS ====
@@ -65,6 +62,7 @@ Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, generateH
 		utils.debug('includePaths', options.includePaths);
 
 		options.file = compileStep._fullInputPath;
+
 		options.success = function(css, sourceMap) {
 			var result = {
 				css: css,
@@ -72,6 +70,7 @@ Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, generateH
 			};
 			future.return(result);
 		};
+
 		// parses the error string
 		options.error = function(err) {
 			var re = /^(.*\.(?:scss|sass)):([0-9]+?): (.*)$/;
@@ -109,23 +108,26 @@ Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, generateH
 }));
 
 /**
- * sass_include_paths.json SHOULD BE PUT IN PACKAGES ONLY EITHER FOR TESTING OR FOR A SASS LIBRARY
+ * sass_include_paths.json SHOULD BE PUT IN PACKAGES FOR A SASS LIBRARY (ex. Bourbon) OR WHEN TESTING A PACKAGE
  *
  * - When adding sass_include_paths.json to a package, it must be added before any sass/scss.
  * - Paths in sass_include_paths.json should be relative to sass_include_paths.json
  * - sass_options.json is only stored in packages for testing purposes
  *
  * 1. Merge `includePaths` from each 'sass_include_paths.json' added using `api.addFiles` to 'sass_options.json'
- * 2. Store 'sass_options.json' in the app root dir
+ * 2. Store 'sass_options.json' in the root dir
  */
 Plugin.registerSourceHandler(INCLUDE_PATHS_FILENAME, {archMatching: 'os'}, generateHandler(function(compileStep) {
-	return !utils.isInPackage(compileStep); // don't process while publishing this package
+	// only process if file is in a package
+	// or if testing a package in which case the compileStep.packageName
+	// would be `local-test:packageName`
+	return utils.isInPackage(compileStep);
 }, function(compileStep) {
 	utils.createPackageLink(compileStep);
 
 	// ==== OPTIONS ====
 
-	var optionsPath = path.join(compileStep.appDir, OPTIONS_FILENAME);
+	var optionsPath = path.join(compileStep.rootDir, OPTIONS_FILENAME);
 	var options = utils.readJSON(optionsPath, compileStep, {});
 	_.defaults(options, {
 		packageIncludePaths: {}
@@ -133,16 +135,17 @@ Plugin.registerSourceHandler(INCLUDE_PATHS_FILENAME, {archMatching: 'os'}, gener
 
 	// the includePaths loaded from sass_include_paths.json
 	var includePaths = utils.readJSON(compileStep._fullInputPath, compileStep, []);
-	includePaths = _.map(includePaths, function(includePath) {
-		if (utils.isTestPackages || utils.isPublishPackage) {
+	// should be relative to root dir
+	var includePathsArray = _.map(includePaths, function(includePath) {
+		if (utils.isTestingPackage(compileStep)) {
 			includePath = path.join(compileStep.relativeDir, includePath);
 		} else {
-			includePath = path.join(utils.PACKAGE_LINKS_DIR, 'packages/', compileStep.packageName.replace(/:/g, path.sep), compileStep.relativeDir, includePath);
+			includePath = path.join(utils.PACKAGE_LINKS_DIR, 'packages/', compileStep.packageName.replace(':', path.sep), compileStep.relativeDir, includePath);
 		}
 		return includePath;
 	});
 
-	options.packageIncludePaths[compileStep.packageName] = includePaths;
+	options.packageIncludePaths[compileStep.packageName] = includePathsArray;
 
 	// ==== WRITE ====
 

@@ -1,1 +1,3 @@
 .build*
+.sass/
+sass_options.json

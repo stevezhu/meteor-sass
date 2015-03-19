@@ -18,26 +18,39 @@ Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, function(
 			file: compileStep.fullInputPath,
 			sourceMap: true,
 			omitSourceMapUrl: true,
-			outFile: "file.css",
+			outFile: "file.css", // required for source maps in node-sass, it's removed below
 			success: function(result) {
 				future.return(result);
 			},
-			error: function() {
-				future.throw("wot error");
+			error: function(e) {
+				future.throw(e);
 			}
 		});
 
 		var result = future.wait();
 		console.log("Result:", result);
 
+		var sourceMap;
 		if (result.map) {
-			var sourceMap = JSON.parse(result.map);
+			sourceMap = JSON.parse(result.map);
 			delete sourceMap.file;
 			sourceMap.sources = [compileStep.inputPath];
 			sourceMap.sourcesContent = [source];
 			console.log("Source map:", sourceMap);
+			sourceMap = JSON.stringify(sourceMap);
 		}
+
+		compileStep.addStylesheet({
+			path: compileStep.inputPath + ".css",
+			data: result.css,
+			sourceMap: sourceMap
+		});
 	} catch (e) {
-		console.log(e);
+		compileStep.error({
+			message: "Sass compiler error: " + e.message,
+			sourcePath: e.file || compileStep.inputPath,
+			line: e.line,
+			column: e.column
+		});
 	}
 });

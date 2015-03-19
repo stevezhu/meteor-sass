@@ -1,6 +1,7 @@
 var _ = Npm.require('lodash');
 var Future = Npm.require('fibers/future');
 var sass = Npm.require('node-sass');
+var path = Npm.require('path');
 
 Plugin.registerSourceHandlers = function(extensions, options, handler) {
 	_.each(extensions, function(extension) {
@@ -9,8 +10,13 @@ Plugin.registerSourceHandlers = function(extensions, options, handler) {
 };
 
 Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, function(compileStep) {
-	var source = compileStep.read().toString('utf8');
+	if (path.basename(compileStep.inputPath)[0] === '_') {
+		console.log("Compiling partial:", compileStep.inputPath);
+		return;
+	}
+
 	console.log("Compiling file:", compileStep.inputPath);
+	var source = compileStep.read().toString('utf8');
 	var future = new Future();
 
 	try {

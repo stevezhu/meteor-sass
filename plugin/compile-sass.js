@@ -9,6 +9,18 @@ Plugin.registerSourceHandlers = function(extensions, options, handler) {
 	});
 };
 
+var INCLUDE_PATHS_FILENAME = 'sass_include_paths.json';
+global.includePaths = [];
+Plugin.registerSourceHandler(INCLUDE_PATHS_FILENAME, {archMatching: 'web'}, function(compileStep) {
+	var source = compileStep.read().toString('utf8');
+	var dir = path.dirname(compileStep.fullInputPath);
+
+	var includePaths = JSON.parse(source);
+	_.each(includePaths, function(includePath) {
+		global.includePaths.push(path.join(dir, includePath));
+	});
+});
+
 Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, function(compileStep) {
 	if (path.basename(compileStep.inputPath)[0] === '_') {
 		console.log("Compiling partial:", compileStep.inputPath);

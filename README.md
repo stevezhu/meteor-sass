@@ -4,8 +4,6 @@ Meteor package for sass and scss using [node-sass](https://github.com/sass/node-
 
 Only tested with meteor v1.0.4.1
 
-NOTE: Make sure you are using v2.0.0 or above. Any other version may not be stable.
-
 ## Usage
 
 ### With applications

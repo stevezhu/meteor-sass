@@ -20,7 +20,7 @@ Plugin.registerSourceHandler(OPTIONS_FILENAME, function(compileStep) {
 });
 
 Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, function(compileStep) {
-  console.log("Sass", compileStep.fullInputPath);
+  //console.log("Sass", compileStep);
   if (path.basename(compileStep.inputPath)[0] === '_') {
     return;
   }
@@ -42,7 +42,7 @@ Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, function(
     omitSourceMapUrl: true
   });
 
-  console.log("options", options);
+  //console.log("options", options);
 
   var includePaths = [];
   includePaths.push(path.dirname(compileStep.fullInputPath));
@@ -53,7 +53,7 @@ Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, function(
 
   _.extend(options, {
     data: source,
-    outFile: "file.css", // required for source maps in node-sass, it's removed below
+    outFile: compileStep.pathForSourceMap, // required for source maps in node-sass
     includePaths: includePaths,
     success: function(result) {
       future.return(result);
@@ -63,12 +63,19 @@ Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, function(
     }
   });
 
+  // XXX should probably be done using different source handlers
+  var inputPathLength = compileStep.inputPath.length;
+  var ext = compileStep.inputPath.substring(inputPathLength - 4);
+  if (ext === 'sass') {
+    options.indentedSyntax = true;
+  }
+
   sass.render(options);
 
   var result;
   try {
     result = future.wait();
-    console.log("Result:", result);
+    //console.log("Result:", result);
   } catch (e) {
     compileStep.error({
       message: "Sass compiler error: " + e.message,
@@ -82,10 +89,10 @@ Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, function(
   var sourceMap;
   if (options.sourceMap && result.map) {
     sourceMap = JSON.parse(result.map);
-    delete sourceMap.file;
+    // TODO also list sources for imports
     sourceMap.sources = [compileStep.inputPath];
     sourceMap.sourcesContent = [source];
-    console.log("Source map:", sourceMap);
+    //console.log("Source map:", sourceMap);
     sourceMap = JSON.stringify(sourceMap);
   }
 

@@ -14,8 +14,7 @@ Any sass/scss files in the project will be compiled and added to the site.
 
 ### With packages
 
-Cannot be used with wrapper packages for sass libraries because of some problems with the meteor api.  
-May be added in a future version.
+When making a wrapper package for and existing sass library, you have to api.addFiles all the relevant files. Users then have to either write the whole path when importing or they can add the path to the sass_options.json with the include path.
 
 ## Config
 

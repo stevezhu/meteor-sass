@@ -52,6 +52,8 @@ Plugin.registerSourceHandlers(['sass', 'scss'], {archMatching: 'web'}, function(
   var future = new Future();
 
   _.extend(options, {
+    // when setting both file and data, data is given precedence, and file is used to calculate paths in source maps
+    file: compileStep.inputPath,
     data: source,
     outFile: compileStep.pathForSourceMap, // required for source maps in node-sass
     includePaths: includePaths,

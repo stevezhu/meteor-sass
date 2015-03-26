@@ -4,9 +4,9 @@ Tinytest.add("Sass - Working", function(test) {
   document.body.appendChild(div);
 
   var elem = div.querySelector('#test-elem');
+
   test.equal(getStyleProperty(elem, 'display'), 'none');
-  test.equal(getStyleProperty(elem, 'border-width'), '1px');
-  test.equal(getStyleProperty(elem, 'border-style'), 'solid');
+  test.equal(getStyleProperty(elem, 'font-size'), '123px');
 
   document.body.removeChild(div);
 });

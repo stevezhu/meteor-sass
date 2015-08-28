@@ -1,3 +1,5 @@
+This project isn't being actively updated please use https://github.com/fourseven/meteor-scss instead.
+
 [![Build Status](https://travis-ci.org/stevezhu/meteor-sass.svg?branch=master)](https://travis-ci.org/stevezhu/meteor-sass)
 
 Meteor package for sass and scss using [node-sass](https://github.com/sass/node-sass).
